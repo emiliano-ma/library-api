@@ -123,3 +123,6 @@
 /Users/emiliano/dev/worldfavor/LibraryApi/bin/Debug/netcoreapp3.1/runtimes/win-x86/native/sni.dll
 /Users/emiliano/dev/worldfavor/LibraryApi/bin/Debug/netcoreapp3.1/runtimes/unix/lib/netcoreapp2.0/System.Runtime.Caching.dll
 /Users/emiliano/dev/worldfavor/LibraryApi/bin/Debug/netcoreapp3.1/runtimes/win/lib/netcoreapp2.0/System.Runtime.Caching.dll
+/Users/emiliano/dev/worldfavor/LibraryApi/bin/Debug/netcoreapp3.1/Microsoft.AspNetCore.JsonPatch.dll
+/Users/emiliano/dev/worldfavor/LibraryApi/bin/Debug/netcoreapp3.1/Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+/Users/emiliano/dev/worldfavor/LibraryApi/bin/Debug/netcoreapp3.1/Newtonsoft.Json.Bson.dll
