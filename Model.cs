@@ -30,16 +30,11 @@ namespace LibraryApi
     public string Title { get; set; }
     public string Author { get; set; }
     public bool Available { get; set; }
-    public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }
     public Book()
     {
-      this.CreatedDate = DateTime.Today;
-      this.ModifiedDate = DateTime.Today;
+      this.ModifiedDate = DateTime.Now;
     }
-
-
     public int ReaderId { get; set; }
-    public Reader Reader { get; set; }
   }
 }
