@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using LibraryApi;
 
 namespace LibraryApi
 {
@@ -26,6 +28,8 @@ namespace LibraryApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddDbContext<LibraryContext>(opt =>
+               opt.UseInMemoryDatabase("Library"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
