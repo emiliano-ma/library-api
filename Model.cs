@@ -6,10 +6,10 @@ namespace LibraryApi
 {
   public class LibraryContext : DbContext
   {
-    // public LibraryContext(DbContextOptions<LibraryContext> options)
-    //       : base(options)
-    // {
-    // }
+    public LibraryContext(DbContextOptions<LibraryContext> options)
+          : base(options)
+    {
+    }
     public DbSet<Reader> Readers { get; set; }
     public DbSet<Book> Books { get; set; }
 
@@ -21,7 +21,7 @@ namespace LibraryApi
     public string Name { get; set; }
     public string Email { get; set; }
 
-    public List<Book> Books { get; } = new List<Book>();
+    public List<Book> Books { get; } 
   }
 
   public class Book
@@ -33,10 +33,12 @@ namespace LibraryApi
     public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }
     public Book()
-       {          
-         this.CreatedDate  = DateTime.Today;
-         this.ModifiedDate = DateTime.Today;
-       }
+    {
+      this.CreatedDate = DateTime.Today;
+      this.ModifiedDate = DateTime.Today;
+    }
+
+
     public int ReaderId { get; set; }
     public Reader Reader { get; set; }
   }
