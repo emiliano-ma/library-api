@@ -55,6 +55,38 @@ namespace LibraryApi.Controllers
       return reader;
     }
 
+    // PATCH: api/Readers/save
+    [HttpPatch("save")]
+    public async Task<IActionResult> SaveReader(Reader reader)
+    {
+      if (!ReaderExists(reader.ReaderId))
+      {
+        _context.Readers.Add(reader);
+        try
+        {
+          await _context.SaveChangesAsync();
+          return CreatedAtAction(nameof(GetReader), new { id = reader.ReaderId }, reader);
+        }
+        catch (Exception exception)
+        {
+          throw new Exception($"Something went wrong: {exception}");
+        }
+      }
+      else
+      {
+        _context.Entry(reader).State = EntityState.Modified;
+        try
+        {
+          await _context.SaveChangesAsync();
+        }
+        catch (Exception exception)
+        {
+          throw new Exception($"Something went wrong: {exception}");
+        }
+        return Content($"The Reader has been updated with '{reader.Name}' '{reader.Email}'", "text/ plain");
+      }
+    }
+
     // PUT: api/Readers/5
     // To protect from overposting attacks, please enable the specific properties you want to bind to, for
     // more details see https://aka.ms/RazorPagesCRUD.
