@@ -12,135 +12,138 @@
 
 ### Base URI on LocalHost
 
-https://localhost:5001/
+```https://localhost:5001/```
 
 ## Books
 
-#### Get list of Books
+### Get list of Books
 
-// GET: api/Books - api/books?author={author} - api/books?title={title}
+    GET: api/Books - api/books?author={author} - api/books?title={title}
 
-#### Get a specific book
+### Get a specific book
 
- // GET: api/Books/{id}
+    GET: api/Books/{id}
 
-#### Create a book
+### Create a book
 
- // POST: api/Books
+    POST: api/Books
 
 Request body - JSON formatted. 
-{
-    "title": "Title 1",
-    "author": "author1",
-    "available": true
-}
-
-#### Update a book
-
- // PUT: api/Books/{id}
-
- {
-    "bookId": 4,
-    "title": "Title 2",
-    "author": "author2",
-    "available": false,
-    "readerId": 2
-}
-
-#### Update/Create a book - Depending on the `bookId` presence/absence in the request.
-
- // PATCH: api/Books/save
-
- {
-    "bookId": 5,
-    "title": "Title 555",
-    "author": "author2",
-    "available": true
-}
-
-#### Delete a book
-
-   // DELETE: api/Books/{id}
 
 
-#### Response body - JSON formatted. 
+    {
+        "title": "Title 1",
+        "author": "author1",
+        "available": true
+    }
 
-{
-    "bookId": 5,
-    "title": "Title 1",
-    "author": "author1",
-    "available": true,
-    "updatedAt": "2020-12-04T21:17:21.530366+01:00",
-    "readerId": 0
-}
+
+### Update a book
+
+    PUT: api/Books/{id}
+
+    {
+        "bookId": 4,
+        "title": "Title 2",
+        "author": "author2",
+        "available": false,
+        "readerId": 2
+    }
+
+### Update/Create a book - Depending on the `bookId` presence/absence in the request.
+
+    PATCH: api/Books/save
+
+    {
+        "bookId": 5,
+        "title": "Title 555",
+        "author": "author2",
+        "available": true
+    }
+
+### Delete a book
+
+    DELETE: api/Books/{id}
+
+
+### Response body for single Book: 
+
+    {
+        "bookId": 5,
+        "title": "Title 1",
+        "author": "author1",
+        "available": true,
+        "updatedAt": "2020-12-04T21:17:21.530366+01:00",
+        "readerId": 0
+    }
 
 ## Readers
 
-#### Get list of Readers
+### Get list of Readers
 
-// GET: api/Readers - api/Readers?name={name} - api/Readers?email={reader@mail.com}
+    GET: api/Readers - api/Readers?name={name} - api/Readers?email={reader@mail.com}
 
-#### Get a specific reader
+### Get a specific reader
 
- // GET: api/Readers/{id}
+    GET: api/Readers/{id}
 
-#### Create a reader
+### Create a reader
 
- // POST: api/Readers
+    POST: api/Readers
 
-Request body - JSON formatted. 
-{
-    "name": "Firstname Lastname",
-    "email": "reader@mail.com"
-}
+    Request body - JSON formatted. 
+    {
+        "name": "Firstname Lastname",
+        "email": "reader@mail.com"
+    }
 
-#### Update a reader
+### Update a reader
 
- // PUT: api/Readers/{id}
+    PUT: api/Readers/{id}
 
-{
-    "readerId": 1,
-    "name": "Firstname Lastname",
-    "email": "reader@mail.com"
-}
+    {
+        "readerId": 1,
+        "name": "Firstname Lastname",
+        "email": "reader@mail.com"
+    }
 
-#### Update/Create a reader - Depending on the `readerId` presence/absence in the request.
+### Update/Create a reader - Depending on the `readerId` presence/absence in the request.
 
- // PATCH: api/Readers/save
+    PATCH: api/Readers/save
 
-{
-    "readerId": 1,
-    "name": "Firstname Lastname",
-    "email": "reader@mail.com"
-}
+    {
+        "readerId": 1,
+        "name": "Firstname Lastname",
+        "email": "reader@mail.com"
+    }
 
-#### Delete a reader
+### Delete a reader
 
-   // DELETE: api/Readers/{id}
+    DELETE: api/Readers/{id}
 
 
-#### Response body - JSON formatted. 
+### Response body for Readers List and associated books: 
 
-[
-  {
-    "readerId": 1,
-    "name": "Firstname Lastname",
-    "email": "reader@mail.com",
-    "books": []
-  },
-  {
-    "readerId": 2,
-    "name": "Emiliano",
-    "email": "emiliano@mail.com",
-    "books": [
+    [
         {
-          "bookId": 4,
-          "title": "Title 2",
-          "author": "author2",
-          "available": false,
-          "updatedAt": "2020-12-04T22:14:54.693325+01:00",
-          "readerId": 2
+            "readerId": 1,
+            "name": "Firstname Lastname",
+            "email": "reader@mail.com",
+            "books": []
+        },
+        {
+            "readerId": 2,
+            "name": "Emiliano",
+            "email": "emiliano@mail.com",
+            "books": [
+                {
+                "bookId": 4,
+                "title": "Title 2",
+                "author": "author2",
+                "available": false,
+                "updatedAt": "2020-12-04T22:14:54.693325+01:00",
+                "readerId": 2
+                }
+            ]
         }
     ]
-  }
-]

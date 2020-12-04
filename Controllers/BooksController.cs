@@ -54,8 +54,6 @@ namespace LibraryApi.Controllers
     }
 
     // PUT: api/Books/5
-    // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-    // more details see https://aka.ms/RazorPagesCRUD.
     [HttpPut("{id}")]
     public async Task<IActionResult> PutBook(int id, Book book)
     {
@@ -86,8 +84,6 @@ namespace LibraryApi.Controllers
     }
 
     // POST: api/Books
-    // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-    // more details see https://aka.ms/RazorPagesCRUD.
     [HttpPost]
     public async Task<ActionResult<Book>> PostBook(Book book)
     {
