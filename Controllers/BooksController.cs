@@ -73,14 +73,45 @@ namespace LibraryApi.Controllers
       {
         await _context.SaveChangesAsync();
       }
-      catch (DbUpdateConcurrencyException)
+      catch (DbUpdateConcurrencyException exception)
       {
-        throw;
+        throw new Exception($"Something went wrong: {exception}");
       }
 
       return bookPatch;
     }
 
+    // PATCH: api/Books/save
+    [HttpPatch("save")]
+    public async Task<IActionResult> SaveBook(Book book)
+    {
+      if (!BookExists(book.BookId))
+      {
+        _context.Books.Add(book);
+        try
+        {
+          await _context.SaveChangesAsync();
+          return CreatedAtAction(nameof(GetBook), new { id = book.BookId }, book);
+        }
+        catch (Exception exception)
+        {
+          throw new Exception($"Something went wrong: {exception}");
+        }
+      }
+      else
+      {
+        _context.Entry(book).State = EntityState.Modified;
+        try
+        {
+          await _context.SaveChangesAsync();
+        }
+        catch (Exception exception)
+        {
+          throw new Exception($"Something went wrong: {exception}");
+        }
+        return Content($"The book has been updated with '{book.Title}' '{book.Author}' '{book.Available}'", "text/ plain");
+      }
+    }
 
     // PUT: api/Books/5
     // To protect from overposting attacks, please enable the specific properties you want to bind to, for
