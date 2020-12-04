@@ -21,7 +21,7 @@ namespace LibraryApi.Controllers
       _context = context;
     }
 
-    // GET: api/Books
+    // GET: api/Books - api/books?author={author} - api/books?title={title}
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Book>>> GetBooks([FromQuery] string Title, [FromQuery] string Author)
     {
@@ -51,66 +51,6 @@ namespace LibraryApi.Controllers
       }
 
       return book;
-    }
-
-
-    // PATCH: api/Books/5
-    [HttpPatch("{id}")]
-    public async Task<ActionResult<Book>> PatchBook(int id, Book book)
-    {
-      var bookPatch = await _context.Books.FindAsync(id);
-
-      if (bookPatch == null)
-      {
-        return NotFound();
-      }
-
-      bookPatch.ReaderId = book.ReaderId;
-      bookPatch.Available = book.Available;
-      bookPatch.UpdatedAt = DateTime.Now;
-
-      try
-      {
-        await _context.SaveChangesAsync();
-      }
-      catch (DbUpdateConcurrencyException exception)
-      {
-        throw new Exception($"Something went wrong: {exception}");
-      }
-
-      return bookPatch;
-    }
-
-     // PATCH: api/Books/save
-    [HttpPatch("save")]
-    public async Task<IActionResult> SaveBook(Book book)
-    {
-      if (!BookExists(book.BookId))
-      {
-        _context.Books.Add(book);
-        try
-        {
-          await _context.SaveChangesAsync();
-          return CreatedAtAction(nameof(GetBook), new { id = book.BookId }, book);
-        }
-        catch (Exception exception)
-        {
-          throw new Exception($"Something went wrong: {exception}");
-        }
-      }
-      else
-      {
-        _context.Entry(book).State = EntityState.Modified;
-        try
-        {
-          await _context.SaveChangesAsync();
-        }
-        catch (Exception exception)
-        {
-          throw new Exception($"Something went wrong: {exception}");
-        }
-        return Content($"The book has been updated with '{book.Title}' '{book.Author}' '{book.Available}'", "text/ plain");
-      }
     }
 
     // PUT: api/Books/5
@@ -155,6 +95,38 @@ namespace LibraryApi.Controllers
       await _context.SaveChangesAsync();
 
       return CreatedAtAction(nameof(GetBook), new { id = book.BookId }, book);
+    }
+
+    // PATCH: api/Books/save
+    [HttpPatch("save")]
+    public async Task<IActionResult> SaveBook(Book book)
+    {
+      if (!BookExists(book.BookId))
+      {
+        _context.Books.Add(book);
+        try
+        {
+          await _context.SaveChangesAsync();
+          return CreatedAtAction(nameof(GetBook), new { id = book.BookId }, book);
+        }
+        catch (Exception exception)
+        {
+          throw new Exception($"Something went wrong: {exception}");
+        }
+      }
+      else
+      {
+        _context.Entry(book).State = EntityState.Modified;
+        try
+        {
+          await _context.SaveChangesAsync();
+          return Content($"The book has been updated with Title:'{book.Title}', Author:'{book.Author}', Available: '{book.Available}'", "text/ plain");
+        }
+        catch (Exception exception)
+        {
+          throw new Exception($"Something went wrong: {exception}");
+        }
+      }
     }
 
     // DELETE: api/Books/5

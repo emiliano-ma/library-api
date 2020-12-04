@@ -21,7 +21,7 @@ namespace LibraryApi.Controllers
       _context = context;
     }
 
-    // GET: api/Readers
+    // GET: api/Readers - api/Readers?email={user@mail.com} - api/Readers?name={name}
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Reader>>> GetReaders([FromQuery] string Name, [FromQuery] string Email)
     {
@@ -53,38 +53,6 @@ namespace LibraryApi.Controllers
       }
 
       return reader;
-    }
-
-    // PATCH: api/Readers/save
-    [HttpPatch("save")]
-    public async Task<IActionResult> SaveReader(Reader reader)
-    {
-      if (!ReaderExists(reader.ReaderId))
-      {
-        _context.Readers.Add(reader);
-        try
-        {
-          await _context.SaveChangesAsync();
-          return CreatedAtAction(nameof(GetReader), new { id = reader.ReaderId }, reader);
-        }
-        catch (Exception exception)
-        {
-          throw new Exception($"Something went wrong: {exception}");
-        }
-      }
-      else
-      {
-        _context.Entry(reader).State = EntityState.Modified;
-        try
-        {
-          await _context.SaveChangesAsync();
-        }
-        catch (Exception exception)
-        {
-          throw new Exception($"Something went wrong: {exception}");
-        }
-        return Content($"The Reader has been updated with '{reader.Name}' '{reader.Email}'", "text/ plain");
-      }
     }
 
     // PUT: api/Readers/5
@@ -129,6 +97,38 @@ namespace LibraryApi.Controllers
       await _context.SaveChangesAsync();
 
       return CreatedAtAction(nameof(GetReader), new { id = reader.ReaderId }, reader);
+    }
+
+    // PATCH: api/Readers/save
+    [HttpPatch("save")]
+    public async Task<IActionResult> SaveReader(Reader reader)
+    {
+      if (!ReaderExists(reader.ReaderId))
+      {
+        _context.Readers.Add(reader);
+        try
+        {
+          await _context.SaveChangesAsync();
+          return CreatedAtAction(nameof(GetReader), new { id = reader.ReaderId }, reader);
+        }
+        catch (Exception exception)
+        {
+          throw new Exception($"Something went wrong: {exception}");
+        }
+      }
+      else
+      {
+        _context.Entry(reader).State = EntityState.Modified;
+        try
+        {
+          await _context.SaveChangesAsync();
+          return Content($"The Reader has been updated with Name:'{reader.Name}', email:'{reader.Email}'", "text/ plain");
+        }
+        catch (Exception exception)
+        {
+          throw new Exception($"Something went wrong: {exception}");
+        }
+      }
     }
 
     // DELETE: api/Readers/5
