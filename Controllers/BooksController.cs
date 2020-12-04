@@ -23,9 +23,20 @@ namespace LibraryApi.Controllers
 
     // GET: api/Books
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+    public async Task<ActionResult<IEnumerable<Book>>> GetBooks([FromQuery] string Title, [FromQuery] string Author)
     {
-      return await _context.Books.ToListAsync();
+      if (!string.IsNullOrEmpty(Title))
+        return await _context.Books
+              .Where(b => b.Title == Title)
+              .ToListAsync();
+
+      else if (!string.IsNullOrEmpty(Author))
+        return await _context.Books
+              .Where(b => b.Author == Author)
+              .ToListAsync();
+
+      else
+        return await _context.Books.ToListAsync();
     }
 
     // GET: api/Books/5

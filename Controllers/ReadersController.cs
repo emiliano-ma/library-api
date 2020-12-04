@@ -23,11 +23,22 @@ namespace LibraryApi.Controllers
 
     // GET: api/Readers
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Reader>>> GetReaders()
+    public async Task<ActionResult<IEnumerable<Reader>>> GetReaders([FromQuery] string Name, [FromQuery] string Email)
     {
-      return await _context.Readers
-        .Include(reader => reader.Books)
-        .ToListAsync();
+      if (!string.IsNullOrEmpty(Name))
+        return await _context.Readers
+              .Where(b => b.Name == Name)
+              .ToListAsync();
+
+      else if (!string.IsNullOrEmpty(Email))
+        return await _context.Readers
+              .Where(b => b.Email == Email)
+              .ToListAsync();
+
+      else
+        return await _context.Readers
+            .Include(reader => reader.Books)
+            .ToListAsync();
     }
 
     // GET: api/Readers/5
