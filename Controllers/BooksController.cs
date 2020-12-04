@@ -67,7 +67,7 @@ namespace LibraryApi.Controllers
 
       bookPatch.ReaderId = book.ReaderId;
       bookPatch.Available = book.Available;
-      bookPatch.ModifiedDate = DateTime.Now;
+      bookPatch.UpdatedAt = DateTime.Now;
 
       try
       {
@@ -81,7 +81,7 @@ namespace LibraryApi.Controllers
       return bookPatch;
     }
 
-    // PATCH: api/Books/save
+     // PATCH: api/Books/save
     [HttpPatch("save")]
     public async Task<IActionResult> SaveBook(Book book)
     {
