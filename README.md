@@ -8,27 +8,31 @@
 
     dotnet test
 
-### Database - Entity Framework Core 
+### Database:
+
+    Managed with Entity Framework Core ORM.
 
     Configured to work with the following Database providers:
 
-    - In-Memory Database Provider
-    - SQLite 
-    - SQL Server (Running on Docker)
+    * In-Memory Database Provider
+    * SQLite 
+    * SQL Server (Running on Docker)
 
-    The code for the different configurations are commented out for easy config. interchange while on Development.
+    The code for the different configurations is commented out for easy DB interchange while on Development.
 
 
 
 ### Base URI on LocalHost
 
-```https://localhost:5001/```
+    https://localhost:5001/
 
-## Books
+## Endpoints for Books:
 
 ### Get list of Books
 
-    GET: api/Books - api/books?author={author} - api/books?title={title}
+    GET: api/Books (all books)
+    GET: api/books?author={author} (by Author)
+    GET: api/books?title={title} (by Title)
 
 ### Get a specific book
 
@@ -38,15 +42,11 @@
 
     POST: api/Books
 
-Request body - JSON formatted. 
-
-
     {
         "title": "Title 1",
         "author": "Author 1",
         "available": true
     }
-
 
 ### Update a book
 
@@ -104,11 +104,13 @@ Request body - JSON formatted.
         "readerId": 0
     }
 
-## Readers
+## Endpoints for Readers
 
 ### Get list of Readers
 
-    GET: api/Readers - api/Readers?name={name} - api/Readers?email={reader@mail.com}
+    GET: api/Readers (all readers)
+    GET: api/Readers?name={name} (by Name)
+    GET: api/Readers?email={reader@mail.com} (by Email)
 
 ### Get a specific reader
 
@@ -118,7 +120,6 @@ Request body - JSON formatted.
 
     POST: api/Readers
 
-    Request body - JSON formatted. 
     {
         "name": "Firstname Lastname",
         "email": "reader@mail.com"
@@ -174,3 +175,5 @@ Request body - JSON formatted.
             ]
         }
     ]
+
+*-Response body / Request body- in this document are JSON formatted for quick use on Postman (or similar).*
