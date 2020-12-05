@@ -125,6 +125,47 @@ namespace LibraryApi.Controllers
       }
     }
 
+    // PATCH: api/Books/save/batch
+    [HttpPatch("save/batch")]
+    public async Task<IActionResult> SaveBooksBatch(IEnumerable<Book> books)
+    {
+      try
+      {
+
+        {
+          foreach (var book in books)
+          {
+
+            if (!TitleExists(book.Title))
+            {
+              _context.Books.Add(book);
+            }
+            else
+            {
+              var bookUpdate = await _context.Books
+                                .FirstOrDefaultAsync(e => e.Title == book.Title);
+
+              if (bookUpdate == null)
+              {
+                return NotFound();
+              }
+              bookUpdate.Title = book.Title;
+              bookUpdate.Author = book.Author;
+              bookUpdate.Available = book.Available;
+              bookUpdate.ReaderId = book.ReaderId;
+              bookUpdate.UpdatedAt = DateTime.Now;
+            }
+          }
+          await _context.SaveChangesAsync();
+          return Content($"Batch succesffully handled", "text/ plain");
+        }
+      }
+      catch (Exception exception)
+      {
+        throw new Exception($"Something went wrong: {exception}");
+      }
+    }
+
     // DELETE: api/Books/5
     [HttpDelete("{id}")]
     public async Task<ActionResult<Book>> DeleteBook(int id)
@@ -144,6 +185,10 @@ namespace LibraryApi.Controllers
     private bool BookExists(int id)
     {
       return _context.Books.Any(e => e.BookId == id);
+    }
+    private bool TitleExists(string title)
+    {
+      return _context.Books.Any(e => e.Title == title);
     }
   }
 }
