@@ -12,7 +12,7 @@ namespace LibraryApi.Migrations
                 columns: table => new
                 {
                     ReaderId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(nullable: false),
                     Email = table.Column<string>(nullable: false)
                 },
@@ -26,12 +26,12 @@ namespace LibraryApi.Migrations
                 columns: table => new
                 {
                     BookId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(nullable: false),
                     Author = table.Column<string>(nullable: false),
                     Available = table.Column<bool>(nullable: false),
                     UpdatedAt = table.Column<DateTime>(nullable: false),
-                    ReaderId = table.Column<int>(nullable: false)
+                    ReaderId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -41,7 +41,7 @@ namespace LibraryApi.Migrations
                         column: x => x.ReaderId,
                         principalTable: "Reader",
                         principalColumn: "ReaderId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

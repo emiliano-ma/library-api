@@ -19,6 +19,6 @@ namespace LibraryApi.Models
     {
       this.UpdatedAt = DateTime.Now;
     }
-    public int ReaderId { get; set; }
+    public int? ReaderId { get; set; }
   }
 }

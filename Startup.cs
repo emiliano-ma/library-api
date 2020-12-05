@@ -30,10 +30,10 @@ namespace LibraryApi
       services.AddControllers();
       // services.AddDbContext<LibraryContext>(options =>
       //    options.UseInMemoryDatabase("Library"));
-      // services.AddDbContext<LibraryContext>(options =>
-      //    options.UseSqlite(Configuration.GetConnectionString("LibraryContext")));
       services.AddDbContext<LibraryContext>(options =>
-      options.UseSqlServer(Configuration.GetConnectionString("LibraryDatabase")));
+         options.UseSqlite(Configuration.GetConnectionString("LibraryContext")));
+      // services.AddDbContext<LibraryContext>(options =>
+      // options.UseSqlServer(Configuration.GetConnectionString("LibraryDatabase")));
       services.AddControllers().AddNewtonsoftJson(options =>
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
     }
