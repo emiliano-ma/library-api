@@ -8,6 +8,16 @@
 
     dotnet test
 
+### Database - Entity Framework Core 
+
+    Configured to work with the following Database providers:
+
+    - In-Memory Database Provider
+    - SQLite 
+    - SQL Server (Running on Docker)
+
+    The code for the different configurations are commented out for easy config. interchange while on Development.
+
 
 
 ### Base URI on LocalHost
@@ -33,7 +43,7 @@ Request body - JSON formatted.
 
     {
         "title": "Title 1",
-        "author": "author1",
+        "author": "Author 1",
         "available": true
     }
 
@@ -45,7 +55,7 @@ Request body - JSON formatted.
     {
         "bookId": 4,
         "title": "Title 2",
-        "author": "author2",
+        "author": "Author 2",
         "available": false,
         "readerId": 2
     }
@@ -57,9 +67,26 @@ Request body - JSON formatted.
     {
         "bookId": 5,
         "title": "Title 555",
-        "author": "author2",
+        "author": "Author 2",
         "available": true
     }
+
+### Update/Create a books in a batch - Depending on the `Title` matching an existing book.
+
+    PATCH: api/Books/save/batch
+
+    [
+        {
+            "title": "Title 555",
+            "author": "Author 2",
+            "available": false
+        },
+        {
+            "title": "Title 5",
+            "author": "Author 2",
+            "available": true
+        }
+    ]
 
 ### Delete a book
 
@@ -71,7 +98,7 @@ Request body - JSON formatted.
     {
         "bookId": 5,
         "title": "Title 1",
-        "author": "author1",
+        "author": "Author 1",
         "available": true,
         "updatedAt": "2020-12-04T21:17:21.530366+01:00",
         "readerId": 0
@@ -104,7 +131,7 @@ Request body - JSON formatted.
     {
         "readerId": 1,
         "name": "Firstname Lastname",
-        "email": "reader@mail.com"
+        "email": "reader22@mail.com"
     }
 
 ### Update/Create a reader - Depending on the `readerId` presence/absence in the request.
@@ -114,7 +141,7 @@ Request body - JSON formatted.
     {
         "readerId": 1,
         "name": "Firstname Lastname",
-        "email": "reader@mail.com"
+        "email": "reader44@mail.com"
     }
 
 ### Delete a reader
@@ -138,8 +165,8 @@ Request body - JSON formatted.
             "books": [
                 {
                 "bookId": 4,
-                "title": "Title 2",
-                "author": "author2",
+                "title": "Title 25",
+                "author": "Author 2",
                 "available": false,
                 "updatedAt": "2020-12-04T22:14:54.693325+01:00",
                 "readerId": 2
