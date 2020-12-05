@@ -28,8 +28,12 @@ namespace LibraryApi
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddControllers();
-      services.AddDbContext<LibraryContext>(opt =>
-         opt.UseInMemoryDatabase("Library"));
+      // services.AddDbContext<LibraryContext>(options =>
+      //    options.UseInMemoryDatabase("Library"));
+      // services.AddDbContext<LibraryContext>(options =>
+      //    options.UseSqlite(Configuration.GetConnectionString("LibraryContext")));
+      services.AddDbContext<LibraryContext>(options =>
+      options.UseSqlServer(Configuration.GetConnectionString("LibraryDatabase")));
       services.AddControllers().AddNewtonsoftJson(options =>
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
     }

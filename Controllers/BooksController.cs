@@ -131,7 +131,6 @@ namespace LibraryApi.Controllers
     {
       try
       {
-
         {
           foreach (var book in books)
           {
