@@ -26,6 +26,11 @@
 
     https://localhost:5001/
 
+### Features
+
+    * Logs - Using NLog.
+
+-------
 ## Endpoints for Books:
 
 ### Get list of Books
@@ -104,6 +109,7 @@
         "readerId": 0
     }
 
+-------
 ## Endpoints for Readers
 
 ### Get list of Readers

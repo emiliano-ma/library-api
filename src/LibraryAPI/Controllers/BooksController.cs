@@ -125,7 +125,7 @@ namespace LibraryApi.Controllers
       try
       {
         await _context.SaveChangesAsync();
-        logger.Info("The book was saved. Exiting controller.");
+        logger.Info($"The book '{book.Title}' was saved. Exiting controller.");
       }
       catch (Exception exception)
       {
@@ -148,7 +148,7 @@ namespace LibraryApi.Controllers
       // if book id update book else create book
       if (!BookExists(book.BookId))
       {
-        logger.Info($"The book doesn't exist. Creating new book.");
+        logger.Info($"The book with title: {book.Title} doesn't exist. Creating new book.");
         _context.Books.Add(book);
         try
         {

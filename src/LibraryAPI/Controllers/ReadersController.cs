@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryApi.Data;
 using LibraryApi.Models;
+using NLog;
 
 namespace LibraryApi.Controllers
 {
@@ -13,6 +14,8 @@ namespace LibraryApi.Controllers
   [ApiController]
   public class ReadersController : ControllerBase
   {
+    private static Logger logger = LogManager.GetLogger("libraryLoggerRules");
+
     private readonly ILibraryContext _context;
 
     public ReadersController(ILibraryContext context)
@@ -24,33 +27,45 @@ namespace LibraryApi.Controllers
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Reader>>> GetReaders([FromQuery] string Name, [FromQuery] string Email)
     {
+      logger.Info("Starting to process GET request api/Readers...");
+
       if (!string.IsNullOrEmpty(Name))
+      {
+        logger.Info($"Requesting list of Readers with Name: '{Name}'.");
         return await _context.Readers
               .Where(b => b.Name == Name)
               .ToListAsync();
-
+      }
       else if (!string.IsNullOrEmpty(Email))
+      {
+        logger.Info($"Requesting list of Readers with Email: '{Email}'.");
+
         return await _context.Readers
               .Where(b => b.Email == Email)
               .ToListAsync();
-
+      }
       else
-        return await _context.Readers
-            .Include(reader => reader.Books)
-            .ToListAsync();
+        logger.Info("No query params were found, requesting full-list of Readers.");
+
+      return await _context.Readers
+          .Include(reader => reader.Books)
+          .ToListAsync();
     }
 
     // GET: api/Readers/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Reader>> GetReader(int id)
     {
+      logger.Info($"Starting to process GET request api/Readers/{id} ...");
+
       var reader = await _context.Readers.FindAsync(id);
 
       if (reader == null)
       {
+        logger.Error($"The {id} didn't match an existing record");
         return NotFound();
       }
-
+      logger.Info("Request successfully handled, exiting controller.");
       return reader;
     }
 
@@ -58,15 +73,19 @@ namespace LibraryApi.Controllers
     [HttpPut("{id}")]
     public async Task<IActionResult> PutReader(int id, Reader reader)
     {
+      logger.Info($"Starting to process PUT request api/Readers/{id} ...");
+
       if (id != reader.ReaderId)
       {
+        logger.Error("Bad Request.");
         return BadRequest();
       }
-
+      logger.Info($"Trying to find the reader with id: {id}");
       var readerUpdate = await _context.Readers.FindAsync(id);
 
       if (readerUpdate == null)
       {
+        logger.Error("The record could not be loaded.");
         return NotFound();
       }
       readerUpdate.Name = reader.Name;
@@ -75,15 +94,19 @@ namespace LibraryApi.Controllers
       try
       {
         await _context.SaveChangesAsync();
+        logger.Info($"The reader with id:{id} was updated. Exiting controller.");
+
       }
       catch (DbUpdateConcurrencyException exception)
       {
         if (!ReaderExists(id))
         {
+          logger.Error($"The {id} didn't match an existing record");
           return NotFound();
         }
         else
         {
+          logger.Error($"An exception ocurred");
           throw new Exception($"Something went wrong: {exception}");
         }
       }
@@ -95,8 +118,10 @@ namespace LibraryApi.Controllers
     [HttpPost]
     public async Task<ActionResult<Reader>> PostReader(Reader reader)
     {
+      logger.Info($"Starting to process POST request api/Readers...");
       if (!ModelState.IsValid)
       {
+        logger.Error("Bad Request.");
         return BadRequest(ModelState);
       }
 
@@ -105,9 +130,11 @@ namespace LibraryApi.Controllers
       try
       {
         await _context.SaveChangesAsync();
+        logger.Info($"The reader '{reader.Name}' was saved. Exiting controller.");
       }
       catch (Exception exception)
       {
+        logger.Error($"An exception ocurred: {exception}");
         throw new Exception($"Something went wrong: {exception}");
       }
       return CreatedAtAction(nameof(GetReader), new { id = reader.ReaderId }, reader);
@@ -117,30 +144,37 @@ namespace LibraryApi.Controllers
     [HttpPatch("save")]
     public async Task<IActionResult> SaveReader(Reader reader)
     {
+      logger.Info($"Starting to process PATCH request api/Readers/save...");
       if (!ModelState.IsValid)
       {
+        logger.Error("Bad Request.");
         return BadRequest(ModelState);
       }
       // if reader id update reader else create reader
       if (!ReaderExists(reader.ReaderId))
       {
+        logger.Info($"The reader '{reader.Name}' doesn't exist. Creating new reader.");
         _context.Readers.Add(reader);
         try
         {
           await _context.SaveChangesAsync();
+          logger.Info($"The reader was saved. Exiting controller...");
           return CreatedAtAction(nameof(GetReader), new { id = reader.ReaderId }, reader);
         }
         catch (Exception exception)
         {
+          logger.Error($"An exception ocurred: {exception}");
           throw new Exception($"Something went wrong: {exception}");
         }
       }
       else
       {
+        logger.Info($"Trying to update the reader with id: {reader.ReaderId}.");
         var readerUpdate = await _context.Readers.FindAsync(reader.ReaderId);
 
         if (readerUpdate == null)
         {
+          logger.Error("The record could not be loaded.");
           return NotFound();
         }
         readerUpdate.Name = reader.Name;
@@ -148,10 +182,12 @@ namespace LibraryApi.Controllers
         try
         {
           await _context.SaveChangesAsync();
+          logger.Info($"The reader with id:{reader.ReaderId} was updated. Exiting controller.");
           return Content($"The Reader has been updated with Name:'{reader.Name}', email:'{reader.Email}'", "text/ plain");
         }
         catch (Exception exception)
         {
+          logger.Error($"An exception ocurred: {exception}");
           throw new Exception($"Something went wrong: {exception}");
         }
       }
@@ -161,9 +197,11 @@ namespace LibraryApi.Controllers
     [HttpDelete("{id}")]
     public async Task<ActionResult<Reader>> DeleteReader(int id)
     {
+      logger.Info($"Starting to process DELETE request api/Readers/{id}...");
       var reader = await _context.Readers.FindAsync(id);
       if (reader == null)
       {
+        logger.Error($"The {id} didn't match an existing record");
         return NotFound();
       }
 
@@ -172,9 +210,11 @@ namespace LibraryApi.Controllers
       try
       {
         await _context.SaveChangesAsync();
+        logger.Info($"The reader with id:{reader.ReaderId} was deleted. Exiting controller.");
       }
       catch (Exception exception)
       {
+        logger.Error($"An exception ocurred: {exception}");
         throw new Exception($"Something went wrong: {exception}");
       }
 
