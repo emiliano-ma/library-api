@@ -14,9 +14,9 @@ namespace LibraryApi.Controllers
   [ApiController]
   public class BooksController : ControllerBase
   {
-    private readonly LibraryContext _context;
+    private readonly ILibraryContext _context;
 
-    public BooksController(LibraryContext context)
+    public BooksController(ILibraryContext context)
     {
       _context = context;
     }
@@ -62,13 +62,23 @@ namespace LibraryApi.Controllers
         return BadRequest();
       }
 
-      _context.Entry(book).State = EntityState.Modified;
+      var bookUpdate = await _context.Books.FindAsync(id);
+
+      if (bookUpdate == null)
+      {
+        return NotFound();
+      }
+      bookUpdate.Title = book.Title;
+      bookUpdate.Author = book.Author;
+      bookUpdate.Available = book.Available;
+      bookUpdate.ReaderId = book.ReaderId;
+      bookUpdate.UpdatedAt = DateTime.Now;
 
       try
       {
         await _context.SaveChangesAsync();
       }
-      catch (DbUpdateConcurrencyException)
+      catch (DbUpdateConcurrencyException exception)
       {
         if (!BookExists(id))
         {
@@ -76,20 +86,32 @@ namespace LibraryApi.Controllers
         }
         else
         {
-          throw;
+          throw new Exception($"Something went wrong: {exception}");
         }
       }
 
-      return NoContent();
+      return Content($"The book has been updated with Title:'{book.Title}', Author:'{book.Author}', Available: '{book.Available}'", "text/ plain");
     }
 
     // POST: api/Books
     [HttpPost]
     public async Task<ActionResult<Book>> PostBook(Book book)
     {
-      _context.Books.Add(book);
-      await _context.SaveChangesAsync();
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
 
+      _context.Books.Add(book);
+
+      try
+      {
+        await _context.SaveChangesAsync();
+      }
+      catch (Exception exception)
+      {
+        throw new Exception($"Something went wrong: {exception}");
+      }
       return CreatedAtAction(nameof(GetBook), new { id = book.BookId }, book);
     }
 
@@ -97,6 +119,11 @@ namespace LibraryApi.Controllers
     [HttpPatch("save")]
     public async Task<IActionResult> SaveBook(Book book)
     {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+      // if book id update book else create book
       if (!BookExists(book.BookId))
       {
         _context.Books.Add(book);
@@ -112,7 +139,17 @@ namespace LibraryApi.Controllers
       }
       else
       {
-        _context.Entry(book).State = EntityState.Modified;
+        var bookUpdate = await _context.Books.FindAsync(book.BookId);
+
+        if (bookUpdate == null)
+        {
+          return NotFound();
+        }
+        bookUpdate.Title = book.Title;
+        bookUpdate.Author = book.Author;
+        bookUpdate.Available = book.Available;
+        bookUpdate.ReaderId = book.ReaderId;
+        bookUpdate.UpdatedAt = DateTime.Now;
         try
         {
           await _context.SaveChangesAsync();
@@ -129,6 +166,8 @@ namespace LibraryApi.Controllers
     [HttpPatch("save/batch")]
     public async Task<IActionResult> SaveBooksBatch(IEnumerable<Book> books)
     {
+      // Takes a list of books and foreach -> 
+      //      if title matches existing book update book else create book
       try
       {
         {
@@ -156,7 +195,7 @@ namespace LibraryApi.Controllers
             }
           }
           await _context.SaveChangesAsync();
-          return Content($"Batch succesffully handled", "text/ plain");
+          return Content("Batch succesffully handled", "text/ plain");
         }
       }
       catch (Exception exception)
@@ -176,9 +215,17 @@ namespace LibraryApi.Controllers
       }
 
       _context.Books.Remove(book);
-      await _context.SaveChangesAsync();
 
-      return book;
+      try
+      {
+        await _context.SaveChangesAsync();
+      }
+      catch (Exception exception)
+      {
+        throw new Exception($"Something went wrong: {exception}");
+      }
+
+      return Content($"Book '{book.Title}' succesffully deleted", "text/ plain");
     }
 
     private bool BookExists(int id)

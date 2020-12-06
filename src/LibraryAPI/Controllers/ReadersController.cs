@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LibraryApi.Data;
@@ -14,9 +13,9 @@ namespace LibraryApi.Controllers
   [ApiController]
   public class ReadersController : ControllerBase
   {
-    private readonly LibraryContext _context;
+    private readonly ILibraryContext _context;
 
-    public ReadersController(LibraryContext context)
+    public ReadersController(ILibraryContext context)
     {
       _context = context;
     }
@@ -64,13 +63,20 @@ namespace LibraryApi.Controllers
         return BadRequest();
       }
 
-      _context.Entry(reader).State = EntityState.Modified;
+      var readerUpdate = await _context.Readers.FindAsync(id);
+
+      if (readerUpdate == null)
+      {
+        return NotFound();
+      }
+      readerUpdate.Name = reader.Name;
+      readerUpdate.Email = reader.Email;
 
       try
       {
         await _context.SaveChangesAsync();
       }
-      catch (DbUpdateConcurrencyException)
+      catch (DbUpdateConcurrencyException exception)
       {
         if (!ReaderExists(id))
         {
@@ -78,20 +84,32 @@ namespace LibraryApi.Controllers
         }
         else
         {
-          throw;
+          throw new Exception($"Something went wrong: {exception}");
         }
       }
 
-      return NoContent();
+      return Content($"The Reader has been updated with Name:'{reader.Name}', email:'{reader.Email}'", "text/ plain");
     }
 
     // POST: api/Readers
     [HttpPost]
     public async Task<ActionResult<Reader>> PostReader(Reader reader)
     {
-      _context.Readers.Add(reader);
-      await _context.SaveChangesAsync();
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
 
+      _context.Readers.Add(reader);
+
+      try
+      {
+        await _context.SaveChangesAsync();
+      }
+      catch (Exception exception)
+      {
+        throw new Exception($"Something went wrong: {exception}");
+      }
       return CreatedAtAction(nameof(GetReader), new { id = reader.ReaderId }, reader);
     }
 
@@ -99,6 +117,11 @@ namespace LibraryApi.Controllers
     [HttpPatch("save")]
     public async Task<IActionResult> SaveReader(Reader reader)
     {
+      if (!ModelState.IsValid)
+      {
+        return BadRequest(ModelState);
+      }
+      // if reader id update reader else create reader
       if (!ReaderExists(reader.ReaderId))
       {
         _context.Readers.Add(reader);
@@ -114,7 +137,14 @@ namespace LibraryApi.Controllers
       }
       else
       {
-        _context.Entry(reader).State = EntityState.Modified;
+        var readerUpdate = await _context.Readers.FindAsync(reader.ReaderId);
+
+        if (readerUpdate == null)
+        {
+          return NotFound();
+        }
+        readerUpdate.Name = reader.Name;
+        readerUpdate.Email = reader.Email;
         try
         {
           await _context.SaveChangesAsync();
@@ -138,9 +168,17 @@ namespace LibraryApi.Controllers
       }
 
       _context.Readers.Remove(reader);
-      await _context.SaveChangesAsync();
 
-      return reader;
+      try
+      {
+        await _context.SaveChangesAsync();
+      }
+      catch (Exception exception)
+      {
+        throw new Exception($"Something went wrong: {exception}");
+      }
+
+      return Content($"Reader '{reader.Name}' succesffully deleted", "text/ plain");
     }
 
     private bool ReaderExists(int id)
